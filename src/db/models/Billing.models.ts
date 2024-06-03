@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from 'mongoose';
-
 export interface IBilling extends Document {
     provider: string;
     type: string;

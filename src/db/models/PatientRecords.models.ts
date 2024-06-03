@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { IPrescription, IPrescriptionDocument } from '../../types/Auth';
-
 export interface IPatientRecord extends Document {
     description: string;
     symptoms: string[];

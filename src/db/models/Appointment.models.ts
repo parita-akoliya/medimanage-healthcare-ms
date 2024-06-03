@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from 'mongoose';
-
 export interface IAppointment extends Document {
     patient_id: mongoose.Types.ObjectId;
     doctor_id: mongoose.Types.ObjectId;

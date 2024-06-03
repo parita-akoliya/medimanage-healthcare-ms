@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from 'mongoose';
-
 export interface ISlot extends Document {
     start_time: Date;
     end_time: Date;

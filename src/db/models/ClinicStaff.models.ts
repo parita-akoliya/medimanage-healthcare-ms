@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
-
 export interface IClinicStaffDocument extends Document {
     user: Types.ObjectId;
     staff_number: string;
