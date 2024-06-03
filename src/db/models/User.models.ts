@@ -1,23 +1,39 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
+import { logger } from '../../utils/logger';
+import { IUser } from '../../types/Auth';
+import { AuthRoles } from '../../types/Enums';
 
-export interface IUser extends Document {
-    user_name: string;
-    user_id: string;
-    user_role: string;
-    password: string;
-    people_id: string;
+export interface IUserDocument extends Document, IUser {
+    comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const UserSchema: Schema = new Schema({
-    user_name: { type: String, required: true },
-    user_id: { type: String, required: true, unique: true },
-    user_role: { type: String, required: true },
-    password: { type: String, required: true },
-    people_id: { type: String, required: true },
+const addressSchema = new Schema({
+    street: String,
+    city: String,
+    state: String,
+    zip: String,
+    country: String,
 });
 
-UserSchema.pre<IUser>('save', async function (next) {
+const userSchema = new Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    contact_no: { type: String, required: false },
+    address: { type: addressSchema, required: false },
+    dob: { type: Date, required: false },
+    gender: { type: String, required: false },
+    role: { type: String, enum: AuthRoles, required: true },
+    status: { type: String, enum: ["Active", "Inactive", "Deleted"], required: true}
+}, {
+    timestamps: true
+}
+);
+
+
+userSchema.pre<IUserDocument>('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
     }
@@ -31,13 +47,15 @@ UserSchema.pre<IUser>('save', async function (next) {
     }
 });
 
-UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
     return bcrypt.compare(candidatePassword, this.password);
 };
 
-UserSchema.post<IUser>('save', function (doc, next) {
-    console.log(`User ${doc.user_name} has been saved.`);
+userSchema.post<IUserDocument>('save', function (doc, next) {
+    logger.debug(`User ${doc.email} has been saved.`);
     next();
 });
 
-export const User = mongoose.model<IUser>('User', UserSchema);
+
+
+export const User = mongoose.model<IUserDocument>('User', userSchema);
