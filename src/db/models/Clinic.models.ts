@@ -1,0 +1,29 @@
+import mongoose, { Document, Schema } from 'mongoose';
+import { IAddress } from '../../types/Auth';
+
+export interface IClinic extends Document {
+    name: string;
+    address: IAddress;
+    phone: string;
+    email: string;
+    specialty: string[];
+    doctors?: any[];
+}
+
+const addressSchema = new Schema({
+    street: String,
+    city: String,
+    state: String,
+    zip: String,
+    country: String,
+});
+
+const clinicSchema = new Schema({
+    name: { type: String, required: true },
+    address: { type: addressSchema, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true },
+    specialty: { type: [String], required: false }
+});
+
+export const Clinic = mongoose.model<IClinic>('Clinic', clinicSchema);
