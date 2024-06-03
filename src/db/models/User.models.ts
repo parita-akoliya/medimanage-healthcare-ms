@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { logger } from '../../utils/logger';
-import { IUser } from '../../types/Auth';
 import { AuthRoles } from '../../types/Enums';
+import { IUser } from '../../types/Auth';
+import { logger } from '../../utils/logger';
 
 export interface IUserDocument extends Document, IUser {
     comparePassword(candidatePassword: string): Promise<boolean>;
