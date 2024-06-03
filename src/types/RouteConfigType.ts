@@ -1,4 +1,4 @@
-import Joi, { Schema } from 'joi';
+import { Schema } from 'joi';
 import { RequestHandler } from 'express';
 
 export interface RouteConfigType {
@@ -7,6 +7,7 @@ export interface RouteConfigType {
     controller: RequestHandler;
     requestBodyValidation?: boolean;
     joiValidationSchema?: Schema;
+    middlewares?: Array<any>
 }
 
 export const defaultRouteConfig: Partial<RouteConfigType> = {
