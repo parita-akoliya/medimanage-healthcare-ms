@@ -39,4 +39,12 @@ export class UserRepository extends BaseRepository<IUserDocument> {
         await user.save();
         return user;
     }
+    async checkExistingUser(email: string) {
+        const existingUser = await User.findOne({ email: email });
+        if (existingUser) {
+            throw new Error('User with this email already exists');
+        }
+        return null;
+    }
+
 }
