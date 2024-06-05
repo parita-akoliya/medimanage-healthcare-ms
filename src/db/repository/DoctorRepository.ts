@@ -12,22 +12,30 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
     }
     async registerDoctor(data: IRegisterDoctor, type: string): Promise<IRegisterDoctor> {
         try {
-            const address: IAddress = {
-                street: data.address.street,
-                city: data.address.city,
-                state: data.address.state,
-                zip: data.address.zip,
-                country: data.address.country        
-            };
+            let address: IAddress = {
+                street: '',
+                city: '',
+                state: '',
+                zip: '',
+                country: ''
+            }
+            if(data.address){
+                address = {
+                    street: data.address.street,
+                    city: data.address.city,
+                    state: data.address.state,
+                    zip: data.address.zip,
+                    country: data.address.country        
+                };    
+            }
             const userData: IUser = {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
                 contact_no: data.contact_no,
-                dob: data.dob,
-                address: address,
-                password: data.password,
-                gender: data.gender,
+                ...(data.dob ? {dob: data.dob}: {}),
+                ...(address ? {address: address}: {}),
+                ...(data.gender ? {gender: data.gender}: {}),
                 role: type,
                 status: 'Inactive'  
             };
@@ -44,8 +52,8 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
             data.doctor_id = doctor._id
             return data;
         } catch (error: any) {
-            console.error('Error registering patient:', error);
-            throw new Error('Failed to register patient');
+            console.error('Error registering doctor:', error);
+            throw new Error('Failed to register doctor');
         }
     }
 

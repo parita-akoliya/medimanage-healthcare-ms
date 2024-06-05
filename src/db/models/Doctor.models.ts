@@ -19,10 +19,10 @@ const availabilitySchema = new Schema({
 
 const doctorSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    speciality: { type: String, required: true },
-    license_number: { type: String, required: true },
-    availability: { type: [availabilitySchema], required: true },
-    yearsOfExperience: { type: String, required: true },
+    speciality: { type: String, required: false },
+    license_number: { type: String, required: false },
+    availability: { type: [availabilitySchema], required: false },
+    yearsOfExperience: { type: String, required: false },
     clinic: { type: Schema.Types.ObjectId, ref: 'Clinic', required: false }
 }, {
     timestamps: true,

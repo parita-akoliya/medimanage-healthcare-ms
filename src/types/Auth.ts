@@ -42,7 +42,7 @@ export interface IUser extends IDoctor, IClinicStaff, IPatient{
     contact_no: string;
     dob?: Date;
     address?: IAddress;
-    password: string;
+    password?: string;
     gender?: string;
     role: string;
     status: string;

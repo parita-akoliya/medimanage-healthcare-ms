@@ -10,7 +10,7 @@ import jwt from "jsonwebtoken";
 import crypto from 'crypto'
 import { IUserDocument } from "../db/models/User.models";
 import { DoctorRepository } from "../db/repository/DoctorRepository";
-import { IClinicStaff, IRegisterDoctor, IRegisterPatient, IUser } from "../types/Auth";
+import { IAddress, IClinicStaff, IRegisterDoctor, IRegisterPatient, IUser } from "../types/Auth";
 import { PatientRepository } from "../db/repository/PatientRepository";
 import { ClinicStaffRepository } from "../db/repository/ClinicStaffRepository";
 
@@ -65,7 +65,7 @@ export class AuthService {
           }
     }
 
-    public async verifyOtp(email: string, otp: string): Promise<{ token: string }> {
+    public async verifyOtp(email: string, otp: string): Promise<{ token: string, role: string }> {
         const user = await this.userRepository.findOne({ email });
 
         if (!user) {
@@ -82,7 +82,7 @@ export class AuthService {
 
         const token = jwt.sign({ id: user._id, role: user.role }, config.jwtSecret, { expiresIn: '1h' });
 
-        return { token };
+        return { token, role: user.role };
     }
         
     public async forgotPassword(email: string): Promise<string> {
@@ -106,7 +106,7 @@ export class AuthService {
               to:email,
               subject: "Reset Password",
               templateName: EmailTemplates.ResetPasswordTemplate,
-              placeholders: {RESET_LINK: token, TEMPLATE_SUBJECT: type === ETokenType.RESETPASSWORD ? 'Password Reset' : 'New Account', DESCRIPTION: type === ETokenType.RESETPASSWORD ? 'We received a request to reset your password. Please click the link below to reset your password:' : 'We received a request to create your account with us. Please click the link below to set your password and activate your account:', ACTION_TEXT:type === ETokenType.RESETPASSWORD ? 'Reset Password' : 'Activate Account'}}
+              placeholders: {RESET_LINK: `http://localhost:3001/auth/reset-password/${token}`, TEMPLATE_SUBJECT: type === ETokenType.RESETPASSWORD ? 'Password Reset' : 'New Account', DESCRIPTION: type === ETokenType.RESETPASSWORD ? 'We received a request to reset your password. Please click the link below to reset your password:' : 'We received a request to create your account with us. Please click the link below to set your password and activate your account:', ACTION_TEXT:type === ETokenType.RESETPASSWORD ? 'Reset Password' : 'Activate Account'}}
             );
             logger.debug("Email sent successfully: ", mailResponse)
           } catch (error: any) {
@@ -147,15 +147,32 @@ export class AuthService {
 
     public async registerUser(userData: IUser, isAdmin: boolean) {
         try {            
+            await this.userRepository.checkExistingUser(userData.email)
+            let address: IAddress = {
+                street: '',
+                city: '',
+                state: '',
+                zip: '',
+                country: ''
+            }
+            if(userData.address){
+                address = {
+                    street: userData.address.street,
+                    city: userData.address.city,
+                    state: userData.address.state,
+                    zip: userData.address.zip,
+                    country: userData.address.country        
+                };    
+            }
+
             const user = await this.userRepository.create({
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
                 contact_no: userData.contact_no,
-                dob: userData.dob,
-                address: userData.address,
-                gender: userData.gender,
-                password: userData.password,
+                ...(userData.dob ? {dob: userData.dob}: {}),
+                ...(address ? {address: address}: {}),
+                ...(userData.gender ? {gender: userData.gender}: {}),
                 role: isAdmin ? EAuthRoles.ADMIN : EAuthRoles.FRONTDESK,
                 status: 'Inactive'
             });
@@ -179,6 +196,7 @@ export class AuthService {
 
     public async registerDoctor(doctorData: IRegisterDoctor): Promise<IRegisterDoctor> {
         try {            
+            await this.userRepository.checkExistingUser(doctorData.email)
             const user = await this.doctorRepository.registerDoctor(doctorData, EAuthRoles.DOCTOR)
             const token = crypto.randomBytes(20).toString('hex');
             await this.passwordResetTokenRepository.create({ user: user.user_id, token, type: ETokenType.NEWACCOUNT });
@@ -192,6 +210,7 @@ export class AuthService {
 
     public async registerPatient(patientData: IRegisterPatient) {
         try {            
+            await this.userRepository.checkExistingUser(patientData.email)
             const user = await this.patientRepository.registerPatient(patientData, EAuthRoles.PATIENT)
             return user;
         } catch (error: any) {
