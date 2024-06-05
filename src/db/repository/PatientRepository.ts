@@ -13,6 +13,9 @@ export class PatientRepository extends BaseRepository<IPatientDocument> {
 
     async registerPatient(data: IRegisterPatient, type: string): Promise<IRegisterPatient> {
         try {
+            if(!data.password || data.password=== ''){
+                throw new Error("Passoword is mandatory field")
+            }
             let address: IAddress = {
                 street: '',
                 city: '',
