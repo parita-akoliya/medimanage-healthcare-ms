@@ -20,13 +20,13 @@ const userSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String, required: false },
     contact_no: { type: String, required: false },
     address: { type: addressSchema, required: false },
     dob: { type: Date, required: false },
     gender: { type: String, required: false },
     role: { type: String, enum: AuthRoles, required: true },
-    status: { type: String, enum: ["Active", "Inactive", "Deleted"], required: true}
+    status: { type: String, enum: ["Active", "Inactive", "Deleted"], required: true }
 }, {
     timestamps: true
 }
@@ -34,16 +34,19 @@ const userSchema = new Schema({
 
 
 userSchema.pre<IUserDocument>('save', async function (next) {
-    if (!this.isModified('password')) {
-        return next();
-    }
+    if (this.password) {
 
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (err: any) {
-        next(err);
+        if (!this.isModified('password')) {
+            return next();
+        }
+
+        try {
+            const salt = await bcrypt.genSalt(10);
+            this.password = await bcrypt.hash(this.password, salt);
+            next();
+        } catch (err: any) {
+            next(err);
+        }
     }
 });
 
