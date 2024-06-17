@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { IAddress } from '../../types/Auth';
+import { IAddress, IUser } from '../../types/Auth';
+
 
 export interface IClinic extends Document {
     name: string;
@@ -8,6 +9,11 @@ export interface IClinic extends Document {
     email: string;
     specialty: string[];
     doctors?: any[];
+}
+
+export interface IClinicRequest {
+    data: IClinic;
+    frontDesk: IUser;
 }
 
 const addressSchema = new Schema({
