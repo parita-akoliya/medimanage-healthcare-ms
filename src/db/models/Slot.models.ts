@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface ISlot extends Document {
+export interface ISlotDocument extends Document {
     start_time: Date;
     end_time: Date;
     status: string;
@@ -17,4 +17,4 @@ const slotSchema = new Schema({
 });
 
 
-export const Slot = mongoose.model<ISlot>('Slot', slotSchema);
+export const Slot = mongoose.model<ISlotDocument>('Slot', slotSchema);

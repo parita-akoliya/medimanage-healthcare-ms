@@ -7,6 +7,10 @@ export class BaseRepository<T extends Document> {
         return this.model.create(data);
     }
 
+    async insertMany(data: Partial<T>): Promise<any> {
+        return this.model.insertMany(data);
+    }
+
     async find(filter: FilterQuery<T>): Promise<T[] | null> {
         return this.model.find(filter).exec();
     }
