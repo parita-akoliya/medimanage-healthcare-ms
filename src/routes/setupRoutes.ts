@@ -6,8 +6,9 @@ import adminRoutes from './route-configs/admin.route-config';
 import clinicRoutes from './route-configs/clinic.route-config';
 import profileRoutes from './route-configs/profile.route-config';
 import searchRoutes from './route-configs/search.route-config';
+import slotRoutes from './route-configs/slot.route-config';
 
-const loadRoutes = [authRoutes, adminRoutes, clinicRoutes, profileRoutes, searchRoutes]
+const loadRoutes = [authRoutes, adminRoutes, clinicRoutes, profileRoutes, searchRoutes, slotRoutes]
 
 export function setupRoutes(app: Application) {
     loadRoutes.forEach(routes => {
