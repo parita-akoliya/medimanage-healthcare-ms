@@ -104,7 +104,7 @@ export class AuthService {
         try {
             const mailResponse = await mailSender({
               to:email,
-              subject: "Reset Password",
+              subject: type === ETokenType.RESETPASSWORD ? "Reset Password" : "Activate Account",
               templateName: EmailTemplates.ResetPasswordTemplate,
               placeholders: {RESET_LINK: `http://localhost:3001/auth/reset-password/${token}`, TEMPLATE_SUBJECT: type === ETokenType.RESETPASSWORD ? 'Password Reset' : 'New Account', DESCRIPTION: type === ETokenType.RESETPASSWORD ? 'We received a request to reset your password. Please click the link below to reset your password:' : 'We received a request to create your account with us. Please click the link below to set your password and activate your account:', ACTION_TEXT:type === ETokenType.RESETPASSWORD ? 'Reset Password' : 'Activate Account'}}
             );
