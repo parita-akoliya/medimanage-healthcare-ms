@@ -135,19 +135,11 @@ export class AuthService {
         return 'Password reset successfully';
     }
 
-    public async getUser(id: string): Promise<IUserDocument | null> {
-        const user = await this.userRepository.findById(id);
-        return user;
-    }
-
-    public async deleteUser(id: string): Promise<IUserDocument | null> {
-        const user = await this.userRepository.findByIdAndDelete(id) as IUserDocument;
-        return user;
-    }
-
     public async registerUser(userData: IUser, isAdmin: boolean) {
         try {            
             await this.userRepository.checkExistingUser(userData.email)
+            console.log(userData);
+            
             let address: IAddress = {
                 street: '',
                 city: '',
@@ -182,6 +174,8 @@ export class AuthService {
                     clinic_id: userData.clinic_id,
                     staff_number: userData.staff_number
                 }
+                console.log(clinicStaffData);
+                
                 const clinicStaff = await this.clinicSTaffRepository.registerStaff(clinicStaffData)
             }
             const token = crypto.randomBytes(20).toString('hex');

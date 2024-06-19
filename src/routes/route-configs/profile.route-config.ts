@@ -2,7 +2,7 @@
 
 import { ProfileController } from '../../controllers/ProfileController';
 import { authenticate } from '../../middleware/verifyJWTToken';
-import { RouteConfig, RouteConfigType } from '../../types/RouteConfigType';
+import { RouteConfigType } from '../../types/RouteConfigType';
 
 const profileController = new ProfileController();
 

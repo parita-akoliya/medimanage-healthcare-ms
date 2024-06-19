@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import { AdminService } from '../services/AdminService';
+import { UserService } from '../services/UserService';
 
 export class AdminController {
     private adminService: AdminService;
+    private userService: UserService;
 
     constructor() {
         this.adminService = new AdminService();
+        this.userService = new UserService();
     }
 
     public async changeUserRole(req: Request, res: Response): Promise<void> {
@@ -37,4 +40,45 @@ export class AdminController {
             res.status(500).send({ error: error.message });
         }
     }
+
+    public async getUser(req: Request, res: Response): Promise<void> {
+        const id = req.params.id;
+        try {
+            const user = await this.userService.getUser(id);
+            res.sendApiResponse(user);
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
+    public async deleteUser(req: Request, res: Response): Promise<void> {
+        const id = req.params.id;
+        try {
+            const result = await this.userService.deleteUser(id);
+            res.sendApiResponse({ message: 'User deleted successfully', data: result });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
+    public async getAllUser(req: Request, res: Response): Promise<void> {
+        try {
+            const result = await this.userService.getAllUsers();
+            res.sendApiResponse({ message: 'User fetched successfully', data: result });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
+    public async updateUser(req: Request, res: Response): Promise<void> {
+        const userId = req.params.id;
+        const updatedProfile = req.body;
+        try {
+            const userProfile = await this.userService.updateUserProfile(userId, updatedProfile);
+            res.sendApiResponse({ data: userProfile });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
 }

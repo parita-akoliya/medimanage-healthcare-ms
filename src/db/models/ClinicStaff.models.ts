@@ -9,7 +9,7 @@ export interface IClinicStaffDocument extends Document {
 const clinicStaffSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     staff_number: { type: String, required: false },
-    clinic: { type: Schema.Types.ObjectId, ref: 'Clinic', required: false }
+    clinic_id: { type: Schema.Types.ObjectId, ref: 'Clinic', required: false }
 }, {
     timestamps: true,
 });

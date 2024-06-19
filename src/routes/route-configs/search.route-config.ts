@@ -1,6 +1,6 @@
 import { SearchController } from '../../controllers/SearchController';
 import { authenticate } from '../../middleware/verifyJWTToken';
-import { RouteConfig, RouteConfigType } from '../../types/RouteConfigType';
+import { RouteConfigType } from '../../types/RouteConfigType';
 
 const searchController = new SearchController();
 

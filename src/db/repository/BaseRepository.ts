@@ -1,3 +1,4 @@
+import { ObjectId } from 'bson';
 import { Model, Document, FilterQuery, UpdateQuery, Schema, Types } from 'mongoose';
 
 export class BaseRepository<T extends Document> {
@@ -15,6 +16,9 @@ export class BaseRepository<T extends Document> {
         return this.model.find(filter).exec();
     }
 
+    async findAndPopulate(filter: FilterQuery<T>, populateFields: string | any): Promise<T[] | null> {
+        return this.model.find(filter).populate(populateFields).exec();
+    }
 
     async findById(id: string | Types.ObjectId): Promise<T | null> {
         return this.model.findById(id).exec();
@@ -37,10 +41,12 @@ export class BaseRepository<T extends Document> {
     }
 
     async findByIdAndDelete(id: string | Types.ObjectId | any): Promise<T | null> {
-        return this.model.findByIdAndDelete(id).exec();
+        return this.model.findByIdAndDelete(new ObjectId(id)).exec();
     }
     
     async findByIdAndUpdate(id: string | Types.ObjectId | any, update: UpdateQuery<T>): Promise<T | null> {
-        return this.model.findByIdAndUpdate(id, update, { new: true }).exec();
+        console.log(id, update);
+        
+        return this.model.findByIdAndUpdate(id, update).exec();
     }
 }

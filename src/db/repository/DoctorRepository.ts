@@ -109,7 +109,7 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
         }
     }
 
-    async findByClinicId(clinicId: string): Promise<IDoctorDocument[]> {
+    async findByClinicId(clinicId: any): Promise<IDoctorDocument[]> {
         return await this.find({clinic_id: clinicId}) as IDoctorDocument[]
     }
     async searchDoctors(query: any): Promise<IDoctorDocument[]> {

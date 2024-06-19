@@ -89,23 +89,4 @@ export class AuthController {
         }
     }
 
-    public async getUser(req: Request, res: Response): Promise<void> {
-        const id = req.params.id;
-        try {
-            const user = await this.authService.getUser(id);
-            res.sendApiResponse(user);
-        } catch (error: any) {
-            res.status(500).send({ error: error.message });
-        }
-    }
-
-    public async deleteUser(req: Request, res: Response): Promise<void> {
-        const id = req.params.id;
-        try {
-            const result = await this.authService.deleteUser(id);
-            res.sendApiResponse({ message: 'User deleted successfully', data: result });
-        } catch (error: any) {
-            res.status(500).send({ error: error.message });
-        }
-    }
 }

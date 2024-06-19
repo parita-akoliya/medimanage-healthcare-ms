@@ -30,7 +30,7 @@ export class ClinicRepository extends BaseRepository<IClinic> {
         }
 
         if (location) {
-            searchCriteria['location.city'] = { $regex: location, $options: 'i' };
+            searchCriteria['address.city'] = { $regex: location, $options: 'i' };
         }
 
         return await this.find(searchCriteria) as IClinic[];
