@@ -37,18 +37,6 @@ const authRoutes: RouteConfigType[] = [
         middlewares: [parseFormData, parseJsonData]
     },
     {
-        method: 'get',
-        path: '/users/:id',
-        controller: authController.getUser.bind(authController),
-        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
-    },
-    {
-        method: 'delete',
-        path: '/auth/users/:id',
-        controller: authController.deleteUser.bind(authController),
-        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
-    },
-    {
         method: 'post',
         path: '/auth/register/doctor',
         controller: authController.registerDoctor.bind(authController),

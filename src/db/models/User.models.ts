@@ -26,6 +26,7 @@ const userSchema = new Schema({
     dob: { type: Date, required: false },
     gender: { type: String, required: false },
     role: { type: String, enum: AuthRoles, required: true },
+    profilePhoto: {type: String},
     status: { type: String, enum: ["Active", "Inactive", "Deleted"], required: true }
 }, {
     timestamps: true

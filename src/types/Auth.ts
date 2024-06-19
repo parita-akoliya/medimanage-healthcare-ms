@@ -46,6 +46,7 @@ export interface IUser extends IDoctor, IClinicStaff, IPatient{
     gender?: string;
     role: string;
     status: string;
+    clinic_id?: string;
 }
 
 export interface IPatient {

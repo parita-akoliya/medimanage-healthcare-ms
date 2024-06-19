@@ -2,7 +2,7 @@ import { AdminController } from '../../controllers/AdminController';
 import { authenticate } from '../../middleware/verifyJWTToken';
 import { authorize } from '../../middleware/verifyRoles';
 import { EAuthRoles } from '../../types/Enums';
-import { RouteConfig, RouteConfigType } from '../../types/RouteConfigType';
+import { RouteConfigType } from '../../types/RouteConfigType';
 
 const adminController = new AdminController();
 
@@ -24,7 +24,32 @@ const adminRoutes: RouteConfigType[] = [
         path: '/admin/reset-password',
         controller: adminController.resetUserPassword.bind(adminController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
-    }
+    },
+    {
+        method: 'get',
+        path: '/user/:id',
+        controller: adminController.getUser.bind(adminController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+    },
+    {
+        method: 'put',
+        path: '/user/:id',
+        controller: adminController.updateUser.bind(adminController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+    },
+    {
+        method: 'delete',
+        path: '/auth/users/:id',
+        controller: adminController.deleteUser.bind(adminController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+    },
+    {
+        method: 'get',
+        path: '/users',
+        controller: adminController.getAllUser.bind(adminController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+    },
+
 ];
 
 export default adminRoutes;
