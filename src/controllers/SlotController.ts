@@ -19,4 +19,15 @@ export class SlotController {
             res.status(500).send({ error: error.message });
         }
     }
+
+    public async availableSlots(req: Request, res: Response): Promise<void> {
+        const doctorId = req.params.doctor_id
+        try {
+            const availableSlots = await this.slotService.availableSlots(doctorId);
+            res.sendApiResponse({ data: availableSlots });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
 }

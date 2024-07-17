@@ -35,7 +35,7 @@ const clinicRoutes: RouteConfigType[] = [
         method: 'get',
         path: '/clinics',
         controller: clinicController.getAllClinics.bind(clinicController),
-        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+        middlewares: [],
     }
 ];
 

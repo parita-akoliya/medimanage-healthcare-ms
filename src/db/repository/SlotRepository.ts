@@ -1,7 +1,9 @@
+import mongoose from 'mongoose';
 import { ESlotStatus } from '../../types/Enums';
-import { ISlot, ISlotsAdd, ISlotsRequest } from '../../types/Slot';
+import { ISlot, ISlotSection, ISlotsAdd, ISlotsRequest } from '../../types/Slot';
 import { ISlotDocument, Slot } from '../models/Slot.models';
 import { BaseRepository } from './BaseRepository';
+import { ObjectId } from 'bson';
 
 export class SlotRepository extends BaseRepository<ISlotDocument> {
     constructor() {
@@ -14,52 +16,51 @@ export class SlotRepository extends BaseRepository<ISlotDocument> {
     }
 
     async getAvailableSlots(doctorId: string): Promise<ISlotDocument[] | null> {
-        return await this.find({doctor_id: doctorId})
+        const results = await this.find({doctor_id: new ObjectId(doctorId), status: ESlotStatus.AVAILABLE})
+        return results
     }
     async addSlots(slotsData: ISlotsRequest): Promise<ISlotDocument> {
-        const { doctorId, noOfMinPerSlot, slots, days } = slotsData
-        const slotsGeneration = this.generateSlots(days, slots.startTime, slots.endTime, noOfMinPerSlot, slots.fromDate, slots.toDate, doctorId)
+        const { doctorId, noOfMinPerSlot, slots, fromDate, toDate } = slotsData
+        const slotsGeneration = this.generateSlots(slots, noOfMinPerSlot, fromDate, toDate, doctorId)
         const slotDb = await this.insertMany(slotsGeneration);
-        return slotDb.save();
+        return slotDb;
     }
 
     generateSlots(
-        days: string[],
-        startTime: string,
-        endTime: string,
+        slots: Array<ISlotsAdd>,
         noOfMinPerSlot: number,
         startDate: Date,
         endDate: Date,
         doctorId: string
     ): any {
-        const slots: ISlot[] = [];
+        const generatedSlots: ISlot[] = [];
         const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
 
-        for (const day of days) {
-            if (!timeRegex.test(startTime) || !timeRegex.test(endTime)) {
+        for (const slot of slots) {
+            if (!timeRegex.test(slot.slot.startTime) || !timeRegex.test(slot.slot.endTime)) {
                 throw new Error("Invalid time format. Please use HH:MM format.");
             }
 
-            const timeValues = [startTime, endTime].map(time => time.split(':').map(Number));
-
+            const timeValues = [slot.slot.startTime, slot.slot.endTime].map(time => time.split(':').map(Number));
+            console.log("timeValuestimeValues", timeValues);
+            
             let currentDay = new Date(startDate);
             while (currentDay.getTime() <= new Date(endDate).getTime()) {
-                if (this.getDayIndex(day) === currentDay.getDay()) {
-                    currentDay.setHours(timeValues[0][0]);
-                    currentDay.setMinutes(timeValues[0][1]);
+                if (this.getDayIndex(slot.day) === currentDay.getDay()) {
+                    currentDay.setHours(timeValues[0][0], timeValues[0][1], 0, 0);
                     const endDay = new Date(currentDay.getTime());
-                    endDay.setHours(timeValues[1][0]);
-                    endDay.setMinutes(timeValues[1][1]);
-
+                    endDay.setHours(timeValues[1][0], timeValues[1][1], 0, 0);
                     while (currentDay < endDay) {
-                        const slot: ISlot = {
+                        const finalSlot: ISlot = {
                             start_time: new Date(currentDay.getTime()),
                             end_time: new Date(currentDay.getTime() + (noOfMinPerSlot * 60000)),
-                            status: 'available',
+                            status: ESlotStatus.AVAILABLE,
                             date: currentDay,
                             doctor_id: doctorId,
                         };
-                        slots.push(slot);
+                        console.log(finalSlot);
+                        
+                        generatedSlots.push(finalSlot);
                         currentDay.setTime(currentDay.getTime() + (noOfMinPerSlot * 60000));
                     }
                 }
@@ -67,10 +68,10 @@ export class SlotRepository extends BaseRepository<ISlotDocument> {
             }
         }
 
-        slots.sort((slotA, slotB) => slotA.start_time.getTime() - slotB.start_time.getTime());
-        return slots;
+        generatedSlots.sort((slotA, slotB) => slotA.start_time.getTime() - slotB.start_time.getTime());
+        return generatedSlots;
     }
-
+    
     getDayIndex(day: string): number {
         const daysOfWeek: any = {
           Sunday: 0,

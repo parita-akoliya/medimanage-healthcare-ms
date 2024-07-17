@@ -9,10 +9,17 @@ const slotController = new SlotController();
 const slotRoutes: RouteConfigType[] = [
     {
         method: 'post',
-        path: '/slot/',
+        path: '/slot',
         controller: slotController.addSlots.bind(slotController),
-        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
-    }
+        middlewares: [authenticate, authorize([EAuthRoles.DOCTOR])],
+    },
+    {
+        method: 'get',
+        path: '/slot/available/:doctor_id',
+        controller: slotController.availableSlots.bind(slotController),
+        middlewares: [],
+    },
+
 ];
 
 export default slotRoutes;

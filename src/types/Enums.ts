@@ -30,3 +30,7 @@ export enum ETokenType {
 export const AppointmentStatuses = [EAppointmentStatus.ATTENDED, EAppointmentStatus.CANCELLED, EAppointmentStatus.NOT_ATTENDED, EAppointmentStatus.SCHEDULED]
 
 export const SlotStatuses = [ESlotStatus.AVAILABLE, ESlotStatus.NOT_AVAILABLE, ESlotStatus.RESERVED]
+
+export const isValidAppointmentStatus = (status: string): boolean => {
+    return Object.values(EAppointmentStatus).includes(status as EAppointmentStatus);
+}

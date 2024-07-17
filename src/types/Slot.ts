@@ -1,15 +1,19 @@
 export interface ISlotsAdd {
-    fromDate: Date;
-    toDate: Date;
+    day: string
+    slot: ISlotSection
+}
+
+export interface ISlotSection {
     startTime: string;
     endTime: string;
 }
 
 export interface ISlotsRequest {
     doctorId: string;
-    days: Array<string>;
+    fromDate: Date;
+    toDate: Date;
     noOfMinPerSlot: number;
-    slots: ISlotsAdd
+    slots: Array<ISlotsAdd>
 }
 
 export interface ISlot {

@@ -47,4 +47,9 @@ export class BaseRepository<T extends Document> {
     async findByIdAndUpdate(id: string | Types.ObjectId | any, update: UpdateQuery<T>): Promise<T | null> {
         return this.model.findByIdAndUpdate(id, update).exec();
     }
+
+    async deleteMany(data: FilterQuery<T>): Promise<any> {
+        return this.model.deleteMany(data);
+    }
+
 }

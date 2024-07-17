@@ -23,6 +23,8 @@ export class ProfileController {
         const userId = req.user.id;
         try {
             const userProfile = await this.userService.getUserProfile(userId);
+            console.log(JSON.stringify(userProfile));
+            
             res.sendApiResponse({ data: userProfile });
         } catch (error: any) {
             res.status(500).send({ error: error.message });

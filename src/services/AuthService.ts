@@ -65,7 +65,7 @@ export class AuthService {
           }
     }
 
-    public async verifyOtp(email: string, otp: string): Promise<{ token: string, role: string }> {
+    public async verifyOtp(email: string, otp: string): Promise<{ token: string, role: string, name: string }> {
         const user = await this.userRepository.findOne({ email });
 
         if (!user) {
@@ -82,7 +82,7 @@ export class AuthService {
 
         const token = jwt.sign({ id: user._id, role: user.role }, config.jwtSecret, { expiresIn: '1h' });
 
-        return { token, role: user.role };
+        return { token, role: user.role, name: `${user.firstName} ${user.lastName}` };
     }
         
     public async forgotPassword(email: string): Promise<string> {
@@ -138,8 +138,6 @@ export class AuthService {
     public async registerUser(userData: IUser, isAdmin: boolean) {
         try {            
             await this.userRepository.checkExistingUser(userData.email)
-            console.log(userData);
-            
             let address: IAddress = {
                 street: '',
                 city: '',
@@ -174,8 +172,6 @@ export class AuthService {
                     clinic_id: userData.clinic_id,
                     staff_number: userData.staff_number
                 }
-                console.log(clinicStaffData);
-                
                 const clinicStaff = await this.clinicSTaffRepository.registerStaff(clinicStaffData)
             }
             const token = crypto.randomBytes(20).toString('hex');

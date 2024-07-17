@@ -39,21 +39,23 @@ export class AppointmentRepository extends BaseRepository<IAppointment> {
     }
 
     async getAppointments(userId: string): Promise<IAppointment[]> {
+        console.log(userId);
+        
         const searchCriteria: any = {
             "$or":[
                 {
-                    "patient_id": userId
+                    "patient_id": new mongoose.Types.ObjectId(userId)
                 },
                 {
-                    "doctor_id": userId
+                    "doctor_id": new mongoose.Types.ObjectId(userId)
                 },
                 {
-                    "clinic_id": userId
+                    "clinic_id": new mongoose.Types.ObjectId(userId)
                 }
             ]
         };
 
 
-        return await this.find(searchCriteria) as IAppointment[];
+        return await this.findAndPopulate(searchCriteria, [{path: 'patient_id', populate: 'user'}, 'doctor_id', 'slot_id', 'clinic_id']) as IAppointment[];
     }
 }
