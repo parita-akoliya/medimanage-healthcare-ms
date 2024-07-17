@@ -10,6 +10,20 @@ export class AppointmentRepository extends BaseRepository<IAppointment> {
         super(Appointment);
     }
 
+    async scheduleAppointments(appointmentData: IAppointmentRequest): Promise<IAppointment> {
+        const dbInsert: Partial<IAppointment> = {
+            patient_id: new mongoose.Types.ObjectId(appointmentData.patientId),
+            slot_id: new mongoose.Types.ObjectId(appointmentData.slotId),
+            clinic_id: new mongoose.Types.ObjectId(appointmentData.clinicId),
+            reason: appointmentData.reason,
+            status: EAppointmentStatus.SCHEDULED,
+            ...(appointmentData.type ? { type: appointmentData.type } : {}),
+            doctor_id: new mongoose.Types.ObjectId(appointmentData.doctorId),
+        }
+        const appointment = await this.create(dbInsert);
+        return appointment.save();
+    }
+
     async updateAppointments(appointmentId: string, appointmentData: any): Promise<IAppointment> {
         const appointment = await this.findByIdAndUpdate(appointmentId, appointmentData) as IAppointment;
         return appointment.save();
