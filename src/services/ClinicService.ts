@@ -77,7 +77,6 @@ export class ClinicService {
                 let objClinic: any = {}
                 Object.assign(objClinic, {clinic, doctors, users})
                 finalClinics.push(objClinic)                
-                console.log(objClinic);
             }
             return finalClinics;
         } catch (error: any) {

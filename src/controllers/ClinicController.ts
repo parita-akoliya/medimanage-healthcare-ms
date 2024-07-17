@@ -49,8 +49,6 @@ export class ClinicController {
     public async getAllClinics(req: Request, res: Response): Promise<void> {
         try {
             const clinics = await this.clinicService.getAllClinics();
-            console.log(clinics);
-            
             res.sendApiResponse({ data: clinics });
         } catch (error: any) {
             res.status(500).json({ error: error.message });

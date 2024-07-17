@@ -63,6 +63,7 @@ export interface IDoctor {
     license_number?: string;
     availability?: IAvailability[];
     yearsOfExperience?: string;
+    clinic?: any;
 }
 
 export interface IClinicStaff {

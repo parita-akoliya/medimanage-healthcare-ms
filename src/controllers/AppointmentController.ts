@@ -1,6 +1,15 @@
 import { Request, Response } from 'express';
 import { AppointmentService } from '../services/AppointmentService';
 
+declare global {
+    namespace Express {
+        interface Request {
+            doctor?: any;
+        }
+    }
+}
+
+
 export class AppointmentController {
     private appointmentService: AppointmentService;
 
@@ -9,17 +18,28 @@ export class AppointmentController {
     }
 
     public async scheduleAppointment(req: Request, res: Response): Promise<void> {
-        const { userId, newPassword } = req.body;
+        const appointmentData = req.body;
         try {
-            const updatedUser = await this.appointmentService.scheduleAppointments(userId, newPassword);
+            const updatedUser = await this.appointmentService.scheduleAppointments(req.user.id,appointmentData);
             res.sendApiResponse({ data: updatedUser });
         } catch (error: any) {
             res.status(500).send({ error: error.message });
         }
     }
 
+    public async updateAppointmentStatus(req: Request, res: Response): Promise<void> {
+        const appointmentData = req.body;
+        try {
+            const updatedUser = await this.appointmentService.updateAppointmentStatus(appointmentData.appointmentId,appointmentData.status);
+            res.sendApiResponse({ data: updatedUser });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
+
     public async getAppointments(req: Request, res: Response): Promise<void> {
-        const { userId, newRole } = req.body;
+        const userId = req.doctor.id;
         try {
             const updatedUser = await this.appointmentService.getAppointments(userId);
             res.sendApiResponse({ data: updatedUser });
@@ -29,9 +49,9 @@ export class AppointmentController {
     }
 
     public async cancelAppointments(req: Request, res: Response): Promise<void> {
-        const { userId, newEmail } = req.body;
+        const { userId } = req.body;
         try {
-            const updatedUser = await this.appointmentService.cancelAppointments(userId, newEmail);
+            const updatedUser = await this.appointmentService.cancelAppointments(userId);
             res.sendApiResponse({ data: updatedUser });
         } catch (error: any) {
             res.status(500).send({ error: error.message });

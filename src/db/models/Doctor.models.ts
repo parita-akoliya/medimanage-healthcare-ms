@@ -7,7 +7,7 @@ export interface IDoctorDocument extends Document {
     license_number: string;
     availability: IAvailability[];
     yearsOfExperience: string;
-    clinic_id: mongoose.Types.ObjectId;
+    clinic: mongoose.Types.ObjectId;
 }
 
 

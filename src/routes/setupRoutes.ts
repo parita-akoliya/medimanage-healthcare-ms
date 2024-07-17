@@ -7,8 +7,10 @@ import clinicRoutes from './route-configs/clinic.route-config';
 import profileRoutes from './route-configs/profile.route-config';
 import searchRoutes from './route-configs/search.route-config';
 import slotRoutes from './route-configs/slot.route-config';
+import doctorRoutes from './route-configs/doctor.route-config';
+import appointmentRoutes from './route-configs/appointment.route-config';
 
-const loadRoutes = [authRoutes, adminRoutes, clinicRoutes, profileRoutes, searchRoutes, slotRoutes]
+const loadRoutes = [authRoutes, adminRoutes, clinicRoutes, profileRoutes, searchRoutes, slotRoutes, doctorRoutes, appointmentRoutes]
 
 export function setupRoutes(app: Application) {
     loadRoutes.forEach(routes => {

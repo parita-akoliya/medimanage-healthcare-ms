@@ -7,7 +7,7 @@ import { RouteConfigType } from '../../types/RouteConfigType';
 
 const appointmentController = new AppointmentController();
 
-const adminRoutes: RouteConfigType[] = [
+const appointmentRoutes: RouteConfigType[] = [
     {
         method: 'post',
         path: '/appointment',
@@ -15,8 +15,14 @@ const adminRoutes: RouteConfigType[] = [
         middlewares: [authenticate, authorize([EAuthRoles.PATIENT])],
     },
     {
+        method: 'post',
+        path: '/appointment/status',
+        controller: appointmentController.updateAppointmentStatus.bind(appointmentController),
+        middlewares: [authenticate, authorize([EAuthRoles.PATIENT, EAuthRoles.DOCTOR])],
+    },
+    {
         method: 'get',
-        path: '/appointment/:user_id',
+        path: '/appointment',
         controller: appointmentController.getAppointments.bind(appointmentController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK])],
     },
@@ -24,8 +30,8 @@ const adminRoutes: RouteConfigType[] = [
         method: 'delete',
         path: '/appointment',
         controller: appointmentController.cancelAppointments.bind(appointmentController),
-        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR])],
     }
 ];
 
-export default adminRoutes;
+export default appointmentRoutes;

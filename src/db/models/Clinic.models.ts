@@ -8,7 +8,7 @@ export interface IClinic extends Document {
     phone: string;
     email: string;
     specialty: string[];
-    doctors?: any[];
+    doctors?: any;
 }
 
 export interface IClinicRequest {

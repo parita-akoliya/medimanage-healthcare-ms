@@ -19,32 +19,32 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
                 zip: '',
                 country: ''
             }
-            if(data.address){
+            if (data.address) {
                 address = {
                     street: data.address.street,
                     city: data.address.city,
                     state: data.address.state,
                     zip: data.address.zip,
-                    country: data.address.country        
-                };    
+                    country: data.address.country
+                };
             }
             const userData: IUser = {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
                 contact_no: data.contact_no,
-                ...(data.dob ? {dob: data.dob}: {}),
-                ...(address ? {address: address}: {}),
-                ...(data.gender ? {gender: data.gender}: {}),
+                ...(data.dob ? { dob: data.dob } : {}),
+                ...(address ? { address: address } : {}),
+                ...(data.gender ? { gender: data.gender } : {}),
                 role: type,
-                status: 'Inactive'  
+                status: 'Inactive'
             };
             const user: IUserDocument = await this.userRepository.create(userData);
             const doctorData: IDoctor = {
                 speciality: data.speciality,
                 license_number: data.license_number,
                 availability: data.availability as IAvailability[],
-                yearsOfExperience: data.yearsOfExperience as string            
+                yearsOfExperience: data.yearsOfExperience as string
             }
             data.user_id = user._id
             doctorData.user = user._id;
@@ -57,27 +57,28 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
         }
     }
 
-    async deletePatient(identifier: string): Promise<void> {
+    async deleteDoctor(identifier: string): Promise<IDoctor> {
         try {
-            const patient = await this.findById(identifier);
-            if (!patient) {
+            const doctor = await this.findById(identifier);
+            if (!doctor) {
                 throw new Error('Patient not found');
             }
-            const user = await this.userRepository.findById(patient.user);
+            const user = await this.userRepository.findById(doctor.user);
 
             if (!user) {
                 throw new Error('User not found');
             }
 
-            await this.findByIdAndDelete(patient._id);
+            await this.findByIdAndDelete(doctor._id);
             await User.findByIdAndDelete(user._id);
+            return doctor;
         } catch (error: any) {
             console.error('Error deleting patient:', error);
             throw new Error('Failed to delete patient');
         }
     }
 
-    async updatePatient(identifier: string, newData: IRegisterDoctor): Promise<IDoctor> {
+    async updateDoctor(identifier: string, newData: IRegisterDoctor): Promise<IDoctor> {
         try {
             const patient = await this.findById(identifier) as IDoctorDocument;
 
@@ -110,27 +111,56 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
     }
 
     async findByClinicId(clinicId: any): Promise<IDoctorDocument[]> {
-        return await this.find({clinic_id: clinicId}) as IDoctorDocument[]
+        return await this.find({ clinic: clinicId }) as IDoctorDocument[]
     }
+
+
     async searchDoctors(query: any): Promise<IDoctorDocument[]> {
         const { name, specialty, location } = query;
-        const searchCriteria: any = {};
+        const pipeline: any[] = [
+            // Lookup to join Doctor and User collections
+            {
+                $lookup: {
+                    from: 'users', // Name of the User collection
+                    localField: 'user', // Field in Doctor collection that references User
+                    foreignField: '_id', // Field in User collection that is referenced
+                    as: 'user'
+                }
+            },
+            // Lookup to join Doctor and Clinic collections
+            {
+                $lookup: {
+                    from: 'clinics', // Name of the Clinic collection (ensure correct pluralization)
+                    localField: 'clinic', // Field in Doctor collection that references Clinic
+                    foreignField: '_id', // Field in Clinic collection that is referenced
+                    as: 'clinic'
+                }
+            },
+            { $unwind: '$user' }, // Unwind the user array to filter by user fields
+            { $unwind: '$clinic' }, // Unwind the clinic array to filter by clinic fields
+            // Match based on query parameters
+            {
+                $match: {
+                    ...(name ? {
+                        $or: [
+                            { 'user.firstName': { $regex: new RegExp(name, 'i') } },
+                            { 'user.lastName': { $regex: new RegExp(name, 'i') } }
+                        ]
+                    } : {}),
+                    ...(specialty ? { specialty: { $regex: new RegExp(specialty, 'i') } } : {}),
+                    ...(location ? { 'user.address.city': { $regex: new RegExp(location, 'i') } } : {})
+                }
+            },
+            // Optionally, add sorting or projection stages here
+        ];
 
-        if (name) {
-            searchCriteria.$or = [
-                { firstName: { $regex: name, $options: 'i' } },
-                { lastName: { $regex: name, $options: 'i' } }
-            ];
+        try {
+            const results = await Doctor.aggregate(pipeline).exec();
+            console.log('Aggregation Results:', results); // Debugging line to check results
+            return results as IDoctorDocument[];
+        } catch (error) {
+            console.error('Error in searchDoctors:', error); // Debugging line to check errors
+            throw error;
         }
-
-        if (specialty) {
-            searchCriteria.specialty = { $regex: specialty, $options: 'i' };
-        }
-
-        if (location) {
-            searchCriteria['address.city'] = { $regex: location, $options: 'i' };
-        }
-
-        return await this.find(searchCriteria) as IDoctorDocument[];
     }
 }

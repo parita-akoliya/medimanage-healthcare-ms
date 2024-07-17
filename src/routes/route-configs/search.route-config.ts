@@ -9,13 +9,13 @@ const searchRoutes: RouteConfigType[] = [
         method: 'get',
         path: '/search/doctors',
         controller: searchController.searchDoctors.bind(searchController),
-        middlewares: [authenticate],
+        middlewares: [],
     },
     {
         method: 'get',
         path: '/search/clinic',
         controller: searchController.searchClinics.bind(searchController),
-        middlewares: [authenticate],
+        middlewares: [],
     }
 ];
 
