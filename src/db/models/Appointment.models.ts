@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { AppointmentStatuses } from '../../types/Enums';
 
 export interface IAppointment extends Document {
     patient_id: mongoose.Types.ObjectId;
@@ -17,11 +18,11 @@ const appointmentSchema = new Schema({
     doctor_id: { type: mongoose.Types.ObjectId, ref: 'Doctor', required: true },
     slot_id: { type: mongoose.Types.ObjectId, ref: 'Slot', required: true },
     clinic_id: { type: mongoose.Types.ObjectId, ref: 'Clinic', required: true },
-    record_id: { type: mongoose.Types.ObjectId, ref: 'PatientRecord', required: true },
-    billing_id: { type: mongoose.Types.ObjectId, ref: 'Billing', required: true },
+    record_id: { type: mongoose.Types.ObjectId, ref: 'PatientRecord', required: false },
+    billing_id: { type: mongoose.Types.ObjectId, ref: 'Billing', required: false },
     reason: { type: String, required: true },
-    status: { type: String, required: true },
-    type: { type: String, required: true },
+    status: { type: String, enum: AppointmentStatuses, required: true },
+    type: { type: String, required: false },
 });
 
 
