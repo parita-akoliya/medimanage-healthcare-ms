@@ -9,6 +9,12 @@ const appointmentController = new AppointmentController();
 
 const adminRoutes: RouteConfigType[] = [
     {
+        method: 'post',
+        path: '/appointment',
+        controller: appointmentController.scheduleAppointment.bind(appointmentController),
+        middlewares: [authenticate, authorize([EAuthRoles.PATIENT])],
+    },
+    {
         method: 'get',
         path: '/appointment/:user_id',
         controller: appointmentController.getAppointments.bind(appointmentController),

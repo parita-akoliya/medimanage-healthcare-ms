@@ -8,6 +8,16 @@ export class AppointmentController {
         this.appointmentService = new AppointmentService();
     }
 
+    public async scheduleAppointment(req: Request, res: Response): Promise<void> {
+        const { userId, newPassword } = req.body;
+        try {
+            const updatedUser = await this.appointmentService.scheduleAppointments(userId, newPassword);
+            res.sendApiResponse({ data: updatedUser });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
     public async getAppointments(req: Request, res: Response): Promise<void> {
         const { userId, newRole } = req.body;
         try {
