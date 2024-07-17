@@ -1,3 +1,4 @@
+import { ESlotStatus } from '../../types/Enums';
 import { ISlot, ISlotsAdd, ISlotsRequest } from '../../types/Slot';
 import { ISlotDocument, Slot } from '../models/Slot.models';
 import { BaseRepository } from './BaseRepository';
@@ -7,6 +8,14 @@ export class SlotRepository extends BaseRepository<ISlotDocument> {
         super(Slot);
     }
 
+    async checkIfSlotIsAvailableForBooking(slotId: string): Promise<boolean | false> {
+        const slot = await this.findById(slotId)
+        return slot?.status === ESlotStatus.AVAILABLE ? true : false
+    }
+
+    async getAvailableSlots(doctorId: string): Promise<ISlotDocument[] | null> {
+        return await this.find({doctor_id: doctorId})
+    }
     async addSlots(slotsData: ISlotsRequest): Promise<ISlotDocument> {
         const { doctorId, noOfMinPerSlot, slots, days } = slotsData
         const slotsGeneration = this.generateSlots(days, slots.startTime, slots.endTime, noOfMinPerSlot, slots.fromDate, slots.toDate, doctorId)

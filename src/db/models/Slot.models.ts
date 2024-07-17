@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { SlotStatuses } from '../../types/Enums';
 
 export interface ISlotDocument extends Document {
     start_time: Date;
@@ -11,7 +12,7 @@ export interface ISlotDocument extends Document {
 const slotSchema = new Schema({
     start_time: { type: Date, required: true },
     end_time: { type: Date, required: true },
-    status: { type: String, required: true },
+    status: { type: String, enum: SlotStatuses,required: true },
     date: { type: Date, required: true },
     doctor_id: { type: mongoose.Types.ObjectId, ref: 'Doctor', required: true },
 });
