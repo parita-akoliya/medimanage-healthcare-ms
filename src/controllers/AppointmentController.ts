@@ -57,4 +57,15 @@ export class AppointmentController {
             res.status(500).send({ error: error.message });
         }
     }
+
+    public async attendAppointments(req: Request, res: Response): Promise<void> {
+        const { appointmentId, reason } = req.body;
+        try {
+            const updatedUser = await this.appointmentService.attendAppointments(appointmentId, reason);
+            res.sendApiResponse({ data: updatedUser });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+    
 }
