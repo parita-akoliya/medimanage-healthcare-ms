@@ -2,6 +2,15 @@ import { Request, Response } from 'express';
 import { AdminService } from '../services/AdminService';
 import { UserService } from '../services/UserService';
 
+declare global {
+    namespace Express {
+        interface Request {
+            user?: any;
+        }
+    }
+}
+
+
 export class AdminController {
     private adminService: AdminService;
     private userService: UserService;
@@ -80,5 +89,16 @@ export class AdminController {
             res.status(500).send({ error: error.message });
         }
     }
+
+    public async getDashboardData(req: Request, res: Response): Promise<void> {
+        const { role } = req.user
+        try {
+            const result = await this.adminService.getDashboardData(role);
+            res.sendApiResponse({ message: 'Dashboard data fetched successfully', data: result });
+        } catch (error: any) {
+            res.status(500).send({ error: error.message });
+        }
+    }
+
 
 }
