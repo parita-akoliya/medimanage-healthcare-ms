@@ -43,4 +43,9 @@ export class AppointmentService {
         throw new Error('Appointment not updated')
     }
 
+    async attendAppointments(appointmentId: string, reason: string): Promise<IAppointment | null> {
+        return this.appointmentRepository.attendAppointments(appointmentId, reason);
+    }
+
+
 }

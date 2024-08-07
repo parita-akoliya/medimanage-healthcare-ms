@@ -58,4 +58,10 @@ export class AppointmentRepository extends BaseRepository<IAppointment> {
 
         return await this.findAndPopulate(searchCriteria, [{path: 'patient_id', populate: 'user'}, 'doctor_id', 'slot_id', 'clinic_id']) as IAppointment[];
     }
+
+    async attendAppointments(appointmentId: string, reason: string): Promise<IAppointment> {
+        const appointment = await this.findByIdAndUpdate(appointmentId, { reason: reason, status: EAppointmentStatus.ATTENDED}) as IAppointment;
+        return appointment.save();
+    }
+
 }

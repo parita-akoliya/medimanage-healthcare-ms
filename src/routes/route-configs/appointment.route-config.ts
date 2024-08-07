@@ -1,4 +1,3 @@
-import { AdminController } from '../../controllers/AdminController';
 import { AppointmentController } from '../../controllers/AppointmentController';
 import { authenticate } from '../../middleware/verifyJWTToken';
 import { authorize } from '../../middleware/verifyRoles';
@@ -31,7 +30,14 @@ const appointmentRoutes: RouteConfigType[] = [
         path: '/appointment',
         controller: appointmentController.cancelAppointments.bind(appointmentController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR])],
-    }
+    },
+    {
+        method: 'post',
+        path: '/appointment/attend',
+        controller: appointmentController.attendAppointments.bind(appointmentController),
+        middlewares: [authenticate, authorize([EAuthRoles.DOCTOR])],
+    },
+
 ];
 
 export default appointmentRoutes;
