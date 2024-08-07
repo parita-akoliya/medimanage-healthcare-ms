@@ -49,6 +49,12 @@ const adminRoutes: RouteConfigType[] = [
         controller: adminController.getAllUser.bind(adminController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
     },
+    {
+        method: 'get',
+        path: '/dashboard',
+        controller: adminController.getDashboardData.bind(adminController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK])],
+    },
 
 ];
 

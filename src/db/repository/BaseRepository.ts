@@ -52,4 +52,9 @@ export class BaseRepository<T extends Document> {
         return this.model.deleteMany(data);
     }
 
+    async countDocuments(data: FilterQuery<T>): Promise<any> {
+        return this.model.countDocuments(data);
+    }
+
+
 }
