@@ -2,11 +2,13 @@ import mongoose, { Document, Schema } from 'mongoose';
 import { IPrescription, IPrescriptionDocument } from '../../types/Auth';
 
 export interface IPatientRecord extends Document {
-    description: string;
+    notes: string;
     symptoms: string[];
-    diagnosis: string[];
+    diagnosis: string;
+    diagnosisForCustomer: string;
     prescriptions: IPrescription[];
     documents: IPrescriptionDocument[];
+    createdAt: Date;
 }
 
 const prescriptionSchema = new Schema({
@@ -21,11 +23,13 @@ const documentSchema = new Schema({
 });
 
 const patientRecordSchema = new Schema({
-    description: { type: String, required: true },
-    symptoms: { type: [String], required: true },
-    diagnosis: { type: [String], required: true },
-    prescriptions: { type: [prescriptionSchema], required: true },
-    documents: { type: [documentSchema], required: true },
+    createdAt: { type: Date, default: Date.now },
+    notes: { type: String, required: false },
+    symptoms: { type: String, required: false },
+    diagnosisForCustomer: { type: String, required: false },
+    diagnosis: { type: String, required: true },
+    prescriptions: { type: [prescriptionSchema], required: false },
+    documents: { type: [documentSchema], required: false },
 });
 
 

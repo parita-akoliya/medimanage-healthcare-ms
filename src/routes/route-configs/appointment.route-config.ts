@@ -23,7 +23,7 @@ const appointmentRoutes: RouteConfigType[] = [
         method: 'get',
         path: '/appointment',
         controller: appointmentController.getAppointments.bind(appointmentController),
-        middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK])],
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK, EAuthRoles.PATIENT])],
     },
     {
         method: 'delete',
@@ -37,6 +37,13 @@ const appointmentRoutes: RouteConfigType[] = [
         controller: appointmentController.attendAppointments.bind(appointmentController),
         middlewares: [authenticate, authorize([EAuthRoles.DOCTOR])],
     },
+    {
+        method: 'get',
+        path: '/appointment/:appointmentId',
+        controller: appointmentController.getAppointment.bind(appointmentController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK])],
+    },
+
 
 ];
 

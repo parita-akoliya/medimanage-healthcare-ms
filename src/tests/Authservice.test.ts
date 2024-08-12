@@ -1,10 +1,3 @@
-/**
- * This test suite covers the functionality of the AuthService class.
- * Each test case validates a specific method of AuthService.
- * Mocked dependencies include UserRepository, OtpRepository, PasswordResetTokenRepository, mailSender, jsonwebtoken, and crypto.
- */
-
-// Importing necessary modules and dependencies
 import { AuthService } from '../services/AuthService';
 import { UserRepository } from '../db/repository/UserRepository';
 import { OtpRepository } from '../db/repository/OtpRepository';
@@ -16,7 +9,7 @@ import crypto from 'crypto';
 import { IUser } from '../types/Auth';
 import { EmailTemplates } from '../types/EmailTemplates';
 
-// Mocking dependencies
+
 jest.mock('../db/repository/UserRepository');
 jest.mock('../db/repository/OtpRepository');
 jest.mock('../db/repository/PasswordResetTokenRepository');
@@ -26,12 +19,12 @@ jest.mock('crypto', () => ({
     randomBytes: jest.fn().mockReturnValue({ toString: jest.fn().mockReturnValue('randomtoken') }),
 }));
 
-// Describe block for testing AuthService
+
 describe('AuthService', () => {
     let authService: AuthService;
     let mockUser: IUserDocument;
 
-    // Setting up before each test
+    
     beforeEach(() => {
         authService = new AuthService();
         mockUser = {
@@ -43,20 +36,20 @@ describe('AuthService', () => {
         } as unknown as IUserDocument;
     });
 
-    // Clearing all mocks after each test
+    
     afterEach(() => {
         jest.clearAllMocks();
     });
 
-    // Test case for registering a new user and sending activation email
+    
     it('should register a new user and send activation email', async () => {
-        // Mocking dependencies
+        
         (UserRepository.prototype.checkExistingUser as jest.Mock).mockResolvedValue(true);
         (UserRepository.prototype.create as jest.Mock).mockResolvedValue(mockUser);
         (crypto.randomBytes as jest.Mock).mockReturnValueOnce({ toString: jest.fn().mockReturnValue('randomtoken') });
         (mailSender as jest.Mock).mockResolvedValue(true);
 
-        // Test data
+        
         const userData: IUser = {
             firstName: 'John',
             lastName: 'Doe',
@@ -75,10 +68,10 @@ describe('AuthService', () => {
             status: 'Inactive'
         };
 
-        // Calling the method being tested
+        
         const result = await authService.registerUser(userData, true);
 
-        // Validating expectations
+        
         expect(UserRepository.prototype.checkExistingUser).toHaveBeenCalledWith('test@example.com');
         expect(UserRepository.prototype.create).toHaveBeenCalledWith(expect.objectContaining(userData));
         expect(crypto.randomBytes).toHaveBeenCalled();
@@ -96,12 +89,12 @@ describe('AuthService', () => {
         expect(result).toEqual(mockUser);
     });
 
-    // Test case for logging in user and sending OTP
+    
     it('should login user and send OTP', async () => {
-        // Mocking dependencies
+        
         (PasswordResetTokenRepository.prototype.create as jest.Mock).mockResolvedValue(true);
 
-        // Test data
+        
         const userData: IUser = {
             email: 'test@example.com',
             password: 'password',
@@ -112,37 +105,37 @@ describe('AuthService', () => {
             status: 'Active'
         };
     
-        // Registering a user
+        
         await authService.registerUser(userData, true);
     
-        // Mocking dependencies
+        
         (UserRepository.prototype.findOne as jest.Mock).mockResolvedValue(mockUser);
         (OtpRepository.prototype.create as jest.Mock).mockResolvedValue(true);
         (mailSender as jest.Mock).mockResolvedValue(true);
         (UserRepository.prototype.comparePasswords as jest.Mock).mockResolvedValue(true)
 
-        // Calling the method being tested
+        
         const result = await authService.login('test@example.com', 'hashedpassword');
     
-        // Validating expectations
+        
         expect(UserRepository.prototype.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
         expect(OtpRepository.prototype.create).toHaveBeenCalled();
         expect(mailSender).toHaveBeenCalled();
         expect(result).toEqual({ verify_user: true, token: '', message: 'OTP sent to email' });
     });
 
-    // Test case for verifying OTP and returning token
+    
     it('should verify OTP and return token', async () => {
-        // Mocking dependencies
+        
         (UserRepository.prototype.findOne as jest.Mock).mockResolvedValue(mockUser);
         (OtpRepository.prototype.findOne as jest.Mock).mockResolvedValue({ user: mockUser._id, otp: '123456' });
         (OtpRepository.prototype.findOneAndDelete as jest.Mock).mockResolvedValue(true);
         (jwt.sign as jest.Mock).mockReturnValue('jsonwebtoken');
 
-        // Calling the method being tested
+        
         const result = await authService.verifyOtp('test@example.com', '123456');
 
-        // Validating expectations
+        
         expect(UserRepository.prototype.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
         expect(OtpRepository.prototype.findOne).toHaveBeenCalledWith({ user: mockUser._id, otp: '123456' });
         expect(OtpRepository.prototype.findOneAndDelete).toHaveBeenCalledWith({ user: mockUser._id, otp: '123456' });
@@ -150,17 +143,17 @@ describe('AuthService', () => {
         expect(result).toEqual({ token: 'jsonwebtoken', role: mockUser.role });
     });
 
-    // Test case for sending reset password email
+    
     it('should send reset password email', async () => {
-        // Mocking dependencies
+        
         (UserRepository.prototype.findOne as jest.Mock).mockResolvedValue(mockUser);
         (PasswordResetTokenRepository.prototype.create as jest.Mock).mockResolvedValue(true);
         (mailSender as jest.Mock).mockResolvedValue(true);
 
-        // Calling the method being tested
+        
         const result = await authService.forgotPassword('test@example.com');
 
-        // Validating expectations
+        
         expect(UserRepository.prototype.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
         expect(PasswordResetTokenRepository.prototype.create).toHaveBeenCalledWith(expect.any(Object));
         expect(mailSender).toHaveBeenCalled();

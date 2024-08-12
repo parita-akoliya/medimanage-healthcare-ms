@@ -56,5 +56,12 @@ export class BaseRepository<T extends Document> {
         return this.model.countDocuments(data);
     }
 
+    async aggregate(pipeline: any[]): Promise<any[]> {
+        return this.model.aggregate(pipeline).exec();
+    }
+
+    async findByIdAndPopulate(id: string | Types.ObjectId, populateFields: string | any): Promise<T | null> {
+        return this.model.findById(id).populate(populateFields).exec();
+    }
 
 }

@@ -17,13 +17,14 @@ const addressSchema = new Schema({
 });
 
 const userSchema = new Schema({
+    createdAt: { type: Date, default: Date.now },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: false },
     contact_no: { type: String, required: false },
     address: { type: addressSchema, required: false },
-    dob: { type: Date, required: false },
+    dob: { type: String, required: false },
     gender: { type: String, required: false },
     role: { type: String, enum: AuthRoles, required: true },
     profilePhoto: {type: String},

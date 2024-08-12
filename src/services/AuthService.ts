@@ -32,10 +32,10 @@ export class AuthService {
     }
 
     public async login(email: string, password: string): Promise<{ verify_user: boolean, token: string, message: string }> {
-        const user = await this.userRepository.findOne({ email });
+        const user = await this.userRepository.findOne({ email, status: 'Active' });
 
         if (!user) {
-            throw new Error('User not found');
+            throw new Error('User not found or User not activated');
         }
 
         const isMatch = await this.userRepository.comparePasswords(user, password);
@@ -86,10 +86,10 @@ export class AuthService {
     }
         
     public async forgotPassword(email: string): Promise<string> {
-        const user = await this.userRepository.findOne({ email });
+        const user = await this.userRepository.findOne({ email, status: 'Active' });
 
         if (!user) {
-            throw new Error('User not found');
+            throw new Error('User not found or User not activated');
         }
 
         const token = crypto.randomBytes(20).toString('hex');
@@ -130,6 +130,7 @@ export class AuthService {
         }
 
         user.password = newPassword;
+        user.status = "Active"
         await user.save();
         await this.passwordResetTokenRepository.findByIdAndDelete(resetTokenRecord._id);
         return 'Password reset successfully';

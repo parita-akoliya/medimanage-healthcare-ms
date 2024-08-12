@@ -1,4 +1,4 @@
-// ProfileController.ts
+
 
 import { Request, Response } from 'express';
 import { UserService } from '../services/UserService';
@@ -23,8 +23,6 @@ export class ProfileController {
         const userId = req.user.id;
         try {
             const userProfile = await this.userService.getUserProfile(userId);
-            console.log(JSON.stringify(userProfile));
-            
             res.sendApiResponse({ data: userProfile });
         } catch (error: any) {
             res.status(500).send({ error: error.message });
@@ -33,9 +31,10 @@ export class ProfileController {
 
     public async updateProfile(req: Request, res: Response): Promise<void> {
         const userId = req.user.id;
+        const role = req.user.role;
         const updatedProfile = req.body;
         try {
-            const userProfile = await this.userService.updateUserProfile(userId, updatedProfile);
+            const userProfile = await this.userService.updateUserProfile(userId, updatedProfile, role);
             res.sendApiResponse({ data: userProfile });
         } catch (error: any) {
             res.status(500).send({ error: error.message });

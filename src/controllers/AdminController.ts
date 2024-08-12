@@ -83,7 +83,7 @@ export class AdminController {
         const userId = req.params.id;
         const updatedProfile = req.body;
         try {
-            const userProfile = await this.userService.updateUserProfile(userId, updatedProfile);
+            const userProfile = await this.userService.updateUserProfile(userId, updatedProfile, 'Admin');
             res.sendApiResponse({ data: userProfile });
         } catch (error: any) {
             res.status(500).send({ error: error.message });
@@ -91,9 +91,8 @@ export class AdminController {
     }
 
     public async getDashboardData(req: Request, res: Response): Promise<void> {
-        const { role } = req.user
         try {
-            const result = await this.adminService.getDashboardData(role);
+            const result = await this.adminService.getDashboardData();
             res.sendApiResponse({ message: 'Dashboard data fetched successfully', data: result });
         } catch (error: any) {
             res.status(500).send({ error: error.message });

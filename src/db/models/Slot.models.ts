@@ -7,6 +7,7 @@ export interface ISlotDocument extends Document {
     status: string;
     date: Date;
     doctor_id: mongoose.Types.ObjectId;
+    createdAt: Date;
 }
 
 const slotSchema = new Schema({
@@ -15,6 +16,7 @@ const slotSchema = new Schema({
     status: { type: String, enum: SlotStatuses,required: true },
     date: { type: Date, required: true },
     doctor_id: { type: mongoose.Types.ObjectId, ref: 'Doctor', required: true },
+    createdAt: { type: Date, default: Date.now },
 });
 
 

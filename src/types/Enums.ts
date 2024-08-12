@@ -5,6 +5,12 @@ export enum EAuthRoles {
     PATIENT = 'Patient'
 }
 
+export enum EAppointmentTypes {
+    InPerson = 'In-Person',
+    Online = 'Online'
+}
+
+
 export enum EAppointmentStatus {
     SCHEDULED = 'Scheduled',
     CANCELLED = 'Cancelled',
@@ -22,12 +28,16 @@ export enum ESlotStatus {
 
 export const AuthRoles = [EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK, EAuthRoles.PATIENT]
 
+export const AppointmentTypes = [EAppointmentTypes.InPerson, EAppointmentTypes.Online]
+
+
 export enum ETokenType {
     RESETPASSWORD = 'ResetPassword',
     NEWACCOUNT = 'NewAccount'
 }
 
 export const AppointmentStatuses = [EAppointmentStatus.ATTENDED, EAppointmentStatus.CANCELLED, EAppointmentStatus.NOT_ATTENDED, EAppointmentStatus.SCHEDULED]
+
 
 export const SlotStatuses = [ESlotStatus.AVAILABLE, ESlotStatus.NOT_AVAILABLE, ESlotStatus.RESERVED]
 
