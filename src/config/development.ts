@@ -11,6 +11,9 @@ export const config = {
         port: 465,
         service: "Gmail",
         secure: true,
+        tls: {
+            rejectUnauthorized: false
+        }
 
     }
 };

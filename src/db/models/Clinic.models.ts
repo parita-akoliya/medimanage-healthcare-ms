@@ -9,6 +9,7 @@ export interface IClinic extends Document {
     email: string;
     specialty: string[];
     doctors?: any;
+    createdAt: Date;
 }
 
 export interface IClinicRequest {
@@ -29,7 +30,8 @@ const clinicSchema = new Schema({
     address: { type: addressSchema, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },
-    specialty: { type: [String], required: false }
+    specialty: { type: [String], required: false },
+    createdAt: { type: Date, default: Date.now },
 });
 
 export const Clinic = mongoose.model<IClinic>('Clinic', clinicSchema);

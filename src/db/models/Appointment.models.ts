@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { AppointmentStatuses } from '../../types/Enums';
+import { AppointmentStatuses, AppointmentTypes } from '../../types/Enums';
 
 export interface IAppointment extends Document {
     patient_id: mongoose.Types.ObjectId;
@@ -11,6 +11,7 @@ export interface IAppointment extends Document {
     reason: string;
     status: string;
     type: string;
+    createdAt: Date;
 }
 
 const appointmentSchema = new Schema({
@@ -22,7 +23,8 @@ const appointmentSchema = new Schema({
     billing_id: { type: mongoose.Types.ObjectId, ref: 'Billing', required: false },
     reason: { type: String, required: true },
     status: { type: String, enum: AppointmentStatuses, required: true },
-    type: { type: String, required: false },
+    type: { type: String, enum: AppointmentTypes, required: false },
+    createdAt: { type: Date, default: Date.now },
 });
 
 

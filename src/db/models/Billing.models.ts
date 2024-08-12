@@ -8,9 +8,11 @@ export interface IBilling extends Document {
     date: Date;
     time: Date;
     status: string;
+    createdAt: Date;    
 }
 
 const billingSchema = new Schema({
+    createdAt: { type: Date, default: Date.now },
     provider: { type: String, required: true },
     type: { type: String, required: true },
     amount: { type: String, required: true },

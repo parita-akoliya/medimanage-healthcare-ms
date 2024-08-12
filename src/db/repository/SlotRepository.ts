@@ -10,9 +10,9 @@ export class SlotRepository extends BaseRepository<ISlotDocument> {
         super(Slot);
     }
 
-    async checkIfSlotIsAvailableForBooking(slotId: string): Promise<boolean | false> {
+    async checkIfSlotIsAvailableForBooking(slotId: string): Promise<ISlotDocument | null> {
         const slot = await this.findById(slotId)
-        return slot?.status === ESlotStatus.AVAILABLE ? true : false
+        return slot
     }
 
     async getAvailableSlots(doctorId: string): Promise<ISlotDocument[] | null> {
@@ -42,8 +42,6 @@ export class SlotRepository extends BaseRepository<ISlotDocument> {
             }
 
             const timeValues = [slot.slot.startTime, slot.slot.endTime].map(time => time.split(':').map(Number));
-            console.log("timeValuestimeValues", timeValues);
-            
             let currentDay = new Date(startDate);
             while (currentDay.getTime() <= new Date(endDate).getTime()) {
                 if (this.getDayIndex(slot.day) === currentDay.getDay()) {
@@ -58,8 +56,6 @@ export class SlotRepository extends BaseRepository<ISlotDocument> {
                             date: currentDay,
                             doctor_id: doctorId,
                         };
-                        console.log(finalSlot);
-                        
                         generatedSlots.push(finalSlot);
                         currentDay.setTime(currentDay.getTime() + (noOfMinPerSlot * 60000));
                     }

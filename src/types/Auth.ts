@@ -23,6 +23,12 @@ export interface IAvailability {
     endTime: string;
 }
 
+export interface IAvailaibleDates {
+    startDate: string;
+    endDate: string;
+}
+
+
 export interface IPrescription {
     medication: string;
     dosage: string;
@@ -47,6 +53,7 @@ export interface IUser extends IDoctor, IClinicStaff, IPatient{
     role: string;
     status: string;
     clinic_id?: string;
+    createdAt?: Date;
 }
 
 export interface IPatient {
@@ -101,5 +108,6 @@ export interface IRegisterDoctor extends IRegisterUser {
     license_number: string;
     availability?: IAvailability[];
     yearsOfExperience?: string;
+    clinic?: any;
 }
 

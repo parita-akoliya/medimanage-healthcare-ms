@@ -1,4 +1,4 @@
-// profileRoutes.ts
+
 
 import { ProfileController } from '../../controllers/ProfileController';
 import { authenticate } from '../../middleware/verifyJWTToken';

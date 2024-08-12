@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { IAddress, IAvailability, IDoctor, IRegisterDoctor, IUser } from '../../types/Auth';
 import { Doctor, IDoctorDocument } from '../models/Doctor.models';
 import { IUserDocument, User } from '../models/User.models';
@@ -44,7 +45,8 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
                 speciality: data.speciality,
                 license_number: data.license_number,
                 availability: data.availability as IAvailability[],
-                yearsOfExperience: data.yearsOfExperience as string
+                yearsOfExperience: data.yearsOfExperience as string,
+                clinic: data.clinic as mongoose.Types.ObjectId
             }
             data.user_id = user._id
             doctorData.user = user._id;
@@ -118,27 +120,27 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
     async searchDoctors(query: any): Promise<IDoctorDocument[]> {
         const { name, specialty, location } = query;
         const pipeline: any[] = [
-            // Lookup to join Doctor and User collections
+            
             {
                 $lookup: {
-                    from: 'users', // Name of the User collection
-                    localField: 'user', // Field in Doctor collection that references User
-                    foreignField: '_id', // Field in User collection that is referenced
+                    from: 'users', 
+                    localField: 'user', 
+                    foreignField: '_id', 
                     as: 'user'
                 }
             },
-            // Lookup to join Doctor and Clinic collections
+            
             {
                 $lookup: {
-                    from: 'clinics', // Name of the Clinic collection (ensure correct pluralization)
-                    localField: 'clinic', // Field in Doctor collection that references Clinic
-                    foreignField: '_id', // Field in Clinic collection that is referenced
+                    from: 'clinics', 
+                    localField: 'clinic', 
+                    foreignField: '_id', 
                     as: 'clinic'
                 }
             },
-            { $unwind: '$user' }, // Unwind the user array to filter by user fields
-            { $unwind: '$clinic' }, // Unwind the clinic array to filter by clinic fields
-            // Match based on query parameters
+            { $unwind: '$user' }, 
+            { $unwind: '$clinic' }, 
+            
             {
                 $match: {
                     ...(name ? {
@@ -151,15 +153,14 @@ export class DoctorRepository extends BaseRepository<IDoctorDocument> {
                     ...(location ? { 'user.address.city': { $regex: new RegExp(location, 'i') } } : {})
                 }
             },
-            // Optionally, add sorting or projection stages here
+            
         ];
 
         try {
             const results = await Doctor.aggregate(pipeline).exec();
-            console.log('Aggregation Results:', results); // Debugging line to check results
             return results as IDoctorDocument[];
         } catch (error) {
-            console.error('Error in searchDoctors:', error); // Debugging line to check errors
+            console.error('Error in searchDoctors:', error); 
             throw error;
         }
     }

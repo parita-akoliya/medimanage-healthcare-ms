@@ -9,13 +9,13 @@ const lookupController = new LookupController();
 const lookupRoutes: RouteConfigType[] = [
     {
         method: 'post',
-        path: '/lookup/',
+        path: '/lookup',
         controller: lookupController.createLookup.bind(lookupController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
     },
     {
         method: 'post',
-        path: '/lookup/:category',
+        path: '/lookup/category/:category',
         controller: lookupController.createLookupInCategory.bind(lookupController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
     },
@@ -27,13 +27,13 @@ const lookupRoutes: RouteConfigType[] = [
     },
     {
         method: 'get',
-        path: '/lookup/:category',
+        path: '/lookup/category/:category',
         controller: lookupController.getLookupsByCategory.bind(lookupController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK])],
     },
     {
         method: 'get',
-        path: '/lookup/:parentId',
+        path: '/lookup/parent/:parentId',
         controller: lookupController.getLookupsByParent.bind(lookupController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK])],
     },
@@ -47,6 +47,30 @@ const lookupRoutes: RouteConfigType[] = [
         method: 'put',
         path: '/lookup/:id',
         controller: lookupController.updateLookup.bind(lookupController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+    },
+    {
+        method: 'post',
+        path: '/lookup/category',
+        controller: lookupController.createLookupCategory.bind(lookupController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+    },
+    {
+        method: 'get',
+        path: '/lookup/categories',
+        controller: lookupController.getAllCategories.bind(lookupController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN, EAuthRoles.DOCTOR, EAuthRoles.FRONTDESK])],
+    },
+    {
+        method: 'put',
+        path: '/lookup/category/:id',
+        controller: lookupController.updateLookupCategory.bind(lookupController),
+        middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
+    },
+    {
+        method: 'delete',
+        path: '/lookup/category/:id',
+        controller: lookupController.deleteLookupCategory.bind(lookupController),
         middlewares: [authenticate, authorize([EAuthRoles.ADMIN])],
     }
 ];
